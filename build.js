@@ -56,28 +56,54 @@ function fixPathsInHtml(filePath) {
   content = content.replace(/href="\/([^"]+)"/g, 'href="./$1"');
   content = content.replace(/url\(\/([^)]+)\)/g, 'url(./$1)');
   
+  // Исправляем корневые ссылки (главная страница)
+  content = content.replace(/href="\/"/g, 'href="./"');
+  content = content.replace(/href='\/'/g, "href='./'");
+  
   fs.writeFileSync(filePath, content);
 }
 
 // Исправляем пути в JS файлах
 function fixPathsInJS(dirPath) {
   const entries = fs.readdirSync(dirPath, { withFileTypes: true });
-  
+
   for (let entry of entries) {
     const fullPath = path.join(dirPath, entry.name);
-    
+
     if (entry.isDirectory()) {
       fixPathsInJS(fullPath);
     } else if (entry.name.endsWith('.js')) {
       let content = fs.readFileSync(fullPath, 'utf8');
-      
+
       // Исправляем различные варианты путей в JS
-      content = content.replace(/href\s*:\s*["']\/([^"']+)["']/g, 'href: "./$1"');
-      content = content.replace(/href\s*=\s*["']\/([^"']+)["']/g, 'href="./$1"');
+      content = content.replace(
+        /href\s*:\s*["']\/([^"']+)["']/g,
+        'href: "./$1"'
+      );
+      content = content.replace(
+        /href\s*=\s*["']\/([^"']+)["']/g,
+        'href="./$1"'
+      );
       content = content.replace(/src\s*=\s*["']\/([^"']+)["']/g, 'src="./$1"');
-      content = content.replace(/window\.location\.href\s*=\s*["']\/([^"']+)["']/g, 'window.location.href="./$1"');
-      content = content.replace(/location\.href\s*=\s*["']\/([^"']+)["']/g, 'location.href="./$1"');
+      content = content.replace(
+        /window\.location\.href\s*=\s*["']\/([^"']+)["']/g,
+        'window.location.href="./$1"'
+      );
+      content = content.replace(
+        /location\.href\s*=\s*["']\/([^"']+)["']/g,
+        'location.href="./$1"'
+      );
       
+      // Исправляем корневые ссылки в JS
+      content = content.replace(/href\s*:\s*["']\/["']/g, 'href: "./"');
+      content = content.replace(/href\s*=\s*["']\/["']/g, 'href="./"');
+      content = content.replace(/window\.location\.href\s*=\s*["']\/["']/g, 'window.location.href="./"');
+      content = content.replace(/location\.href\s*=\s*["']\/["']/g, 'location.href="./"');
+      
+      // Исправляем импорты node_modules
+      content = content.replace(/from\s+['"]\/node_modules\//g, 'from "./node_modules/');
+      content = content.replace(/import\s+['"]\/node_modules\//g, 'import "./node_modules/');
+
       fs.writeFileSync(fullPath, content);
     }
   }

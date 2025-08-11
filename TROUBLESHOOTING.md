@@ -3,6 +3,7 @@
 ## Ошибка "Permission denied" в GitHub Actions
 
 ### Проблема:
+
 ```
 remote: Permission to username/repository.git denied to github-actions[bot].
 fatal: unable to access 'https://github.com/username/repository.git/': The requested URL returned error: 403
@@ -38,12 +39,14 @@ Error: Action failed with "The process '/usr/bin/git' failed with exit code 128"
 Если проблема не решается, попробуйте использовать Personal Access Token:
 
 1. Создайте Personal Access Token:
+
    - GitHub → Settings → Developer settings → Personal access tokens → Tokens (classic)
    - Нажмите "Generate new token (classic)"
    - Выберите область действия: `repo`, `workflow`
    - Скопируйте токен
 
 2. Добавьте токен в секреты репозитория:
+
    - Репозиторий → Settings → Secrets and variables → Actions
    - Нажмите "New repository secret"
    - Name: `PERSONAL_TOKEN`
@@ -60,9 +63,24 @@ Error: Action failed with "The process '/usr/bin/git' failed with exit code 128"
 
 ## Другие частые проблемы:
 
-### 1. Ошибки сборки (Build failed)
+### 1. Deprecated Actions версии
+
+**Проблема:**
+
+```
+Error: This request has been automatically failed because it uses a deprecated version of `actions/upload-artifact: v3`
+```
+
+**Решение:** Уже исправлено в актуальной версии workflow файла. Используются последние версии:
+
+- `actions/configure-pages@v4`
+- `actions/upload-pages-artifact@v3`
+- `actions/deploy-pages@v4`
+
+### 2. Ошибки сборки (Build failed)
 
 Проверьте логи в Actions:
+
 - Убедитесь, что все зависимости установлены
 - Проверьте, что команда `npm run build` работает локально
 
@@ -71,15 +89,31 @@ Error: Action failed with "The process '/usr/bin/git' failed with exit code 128"
 - Убедитесь, что файл `.nojekyll` присутствует в папке `dist/`
 - Проверьте, что `404.html` создается при сборке
 
-### 3. CORS ошибки
+### 3. Сайт загружается без стилей и скриптов
+
+**Проблема:** HTML загружается, но CSS и JavaScript не работают.
+
+**Причина:** Абсолютные пути (начинающиеся с `/`) не работают на GitHub Pages в подпапке.
+
+**Решение:** Уже исправлено в актуальной версии скрипта сборки. При сборке все пути автоматически конвертируются в относительные (с `./`).
+
+**Как работает:**
+
+- `/src/styles/styles.css` → `./src/styles/styles.css`
+- `/svgs/logo.svg` → `./svgs/logo.svg`
+- Исправление происходит в HTML и JS файлах
+
+### 4. CORS ошибки
 
 Если API запросы не работают:
+
 - Убедитесь, что ваш API сервер разрешает запросы с домена GitHub Pages
 - Добавьте домен `https://username.github.io` в CORS настройки вашего API
 
 ### 4. Проблемы с кешированием
 
 Если изменения не отображаются:
+
 - Очистите кеш браузера (Ctrl+F5)
 - Подождите несколько минут - GitHub Pages может кешировать контент
 

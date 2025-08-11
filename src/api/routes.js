@@ -9,4 +9,7 @@ export const API_ROUTES = {
   CALLBACK_REQUESTS: 'callback-requests/',
 };
 
-export const BASE_URL = 'http://37.114.37.7:8000/api/';
+// Определяем BASE_URL в зависимости от протокола страницы
+export const BASE_URL = window.location.protocol === 'https:' 
+  ? 'https://37.114.37.7:8000/api/' 
+  : 'http://37.114.37.7:8000/api/';
