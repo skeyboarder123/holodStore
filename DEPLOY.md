@@ -29,10 +29,14 @@ git push -u origin main
 
 ### 2. Настройка GitHub Pages
 
-1. Идите в настройки вашего репозитория на GitHub
-2. Выберите раздел "Pages" в левом меню
-3. В разделе "Source" выберите **"GitHub Actions"**
-4. Сохраните настройки
+1. Идите в настройки вашего репозитория на GitHub (`Settings`)
+2. Выберите раздел **"Pages"** в левом меню
+3. В разделе **"Source"** выберите **"GitHub Actions"** 
+4. Нажмите **"Save"**
+
+**ВАЖНО**: Убедитесь, что в настройках репозитория (`Settings` → `Actions` → `General`) включены права доступа:
+- ✅ "Read and write permissions" для Workflow permissions
+- ✅ "Allow GitHub Actions to create and approve pull requests"
 
 ### 3. Автоматический деплой
 
