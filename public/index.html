@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Интернет-магазин климатической техники и вентиляционного оборудования"
+    />
+
+    <!-- Preconnect to critical domains -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <!-- Critical CSS to prevent CLS -->
+    <style>
+      *,
+      *:before,
+      *:after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        width: 100%;
+        height: 100%;
+        position: relative;
+        margin: 0;
+        padding: 0;
+        background-color: rgb(255, 255, 255);
+        font-family: Montserrat, Arial, sans-serif;
+      }
+
+      #main_content:empty::before {
+        content: '';
+        display: block;
+        width: 100%;
+        height: 90vh;
+        background: transparent;
+        background-size: 400% 100%;
+        animation: loading 1.5s infinite;
+      }
+
+      @keyframes loading {
+        0% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0 50%;
+        }
+      }
+
+      /* Reserve space for images to prevent layout shifts */
+      .logo-container {
+        width: 18vw;
+        height: auto;
+        min-width: 18vw;
+        display: flex;
+        align-items: center;
+      }
+
+      .logo {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+      }
+
+      /* Reserve space for dropdown to prevent layout shifts */
+      .dropdown-content {
+        min-height: 0;
+        height: auto;
+      }
+
+      /* Font display settings to prevent layout shifts during font loading */
+      @font-face {
+        font-family: 'Montserrat';
+        font-style: normal;
+        font-weight: 400;
+        font-display: swap;
+        src: local('Montserrat Regular'), local('Montserrat-Regular'),
+          url(https://fonts.gstatic.com/s/montserrat/v25/JTUHjIg1_i6t8kCHKm4532VJOt5-QNFgpCtr6Hw5aXo.woff2)
+            format('woff2');
+      }
+
+      .header {
+        width: 100%;
+        background: transparent;
+        z-index: 100;
+        box-shadow: 0 2px 6px rgba(99, 99, 99, 0.3);
+        color: white;
+        position: sticky;
+        top: 0;
+        backdrop-filter: blur(15px);
+        transition: background 0.23s ease-in-out;
+        contain: layout style paint;
+      }
+    </style>
+
+    <!-- Performance optimizer (early load) -->
+    <script src="/optimizer.js" async defer></script>
+
+    <!-- Preload critical assets -->
+    <link rel="preload" href="/svgs/logo.svg" as="image" />
+    <link rel="preload" href="/src/styles/normalize.css" as="style" />
+
+    <!-- Font with display=swap strategy -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Non-render blocking CSS loading -->
+    <link rel="stylesheet" href="/src/styles/normalize.css" />
+    <link rel="stylesheet" href="/src/styles/styles.css" />
+
+    <title>
+      Точка Холода - климатическая техника и вентиляционное оборудование
+    </title>
+  </head>
+  <body>
+    <div class="header__grad">
+      <header class="header">
+        <div class="headerInfo">
+          <div class="logo-container">
+            <a href="/" style="width:100%;height:100%;" id="home-link"
+              ><img
+                src="/svgs/logo.svg"
+                alt="лого"
+                class="logo"
+                width="400"
+                height="155"
+                loading="eager"
+                fetchpriority="high"
+              />
+            </a>
+          </div>
+
+          <div class="header__nav">
+            <nav style="width: fit-content">
+              <ul class="fixed-container fixed-container__list">
+                <li class="fixed-container__list__inner">
+                  <div class="dropdown">
+                    <a
+                      class="dropbtn adaptive-text__company"
+                      href="/catalog"
+                      id="catalog-link"
+                      >Каталог товаров</a
+                    >
+                  </div>
+                </li>
+                <li class="fixed-container__list__inner">
+                  <div class="dropdown">
+                    <a
+                      class="dropbtn adaptive-text__company"
+                      href="/services"
+                      id="services-link"
+                      >Услуги и сервис</a
+                    >
+                  </div>
+                </li>
+                <li class="fixed-container__list__inner">
+                  <div class="dropdown">
+                    <a class="dropbtn " href="/company" id="company-link">
+                      <p class="adaptive-text__company">О&nbsp;компании</p>
+
+                      <img
+                        style="width: 0.7vw; height: 0.7vw"
+                        src="/svgs/arrdown.svg"
+                        class="arrow-down__header"
+                        alt="стрелка вниз"
+                      />
+                    </a>
+                    <div class="dropdown-content">
+                      <div class="sub-dropdown adaptive-text__company">
+                        <a href="/company/recvisits" data-route="recs"
+                          >Реквизиты</a
+                        >
+                        <a href="/company/feedback" data-route="reviews"
+                          >Отзывы</a
+                        >
+                        <a href="/company/clients" data-route="clients"
+                          >Наши клиенты</a
+                        >
+                        <a href="/company/contacts" data-route="contacts"
+                          >Контакты</a
+                        >
+                      </div>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+            </nav>
+            <div class="header__contacts-container">
+              <div class="header__contacts">
+                <div class="adaptive-text__company">
+                  <a
+                    style="display: flex; align-items: center; gap: 0.2vw"
+                    href="tel:+1234567890"
+                  >
+                    <div style="margin-top: 2px; padding-right: 2px">
+                      <img
+                        class="phone-icon"
+                        src="/svgs/phone.svg"
+                        alt="phone call"
+                      />
+                    </div>
+                    <span>+7 (499) 638-28-01</span>
+                  </a>
+                </div>
+                <div class="adaptive-text__company">
+                  <a
+                    style="display: flex; align-items: center; gap: 0.2vw"
+                    href="tel:+1234567890"
+                  >
+                    <div style="margin-top: 2px; margin-right: 2px">
+                      <img
+                        class="phone-icon"
+                        src="/svgs/phone.svg"
+                        alt="phone call"
+                      />
+                    </div>
+                    <span>Обратный звонок</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 2vw;">
+            <div class="cart-icon">
+              <a href="/bucket">
+                <img
+                  src="/svgs/povozka.svg"
+                  alt="корзина"
+                  class="cart-icon__image"
+                />
+                <div class="cart-icon__notification">
+                  <span
+                    class="cart-icon__count adaptive-text__company"
+                    style="font-weight: 700;"
+                    >0</span
+                  >
+                </div>
+              </a>
+            </div>
+
+            <div class="hamburger">
+              <img
+                class="hamburger__image"
+                src="/svgs/hamburger-menu.svg"
+                alt="Меню"
+              />
+            </div>
+          </div>
+          <div class="mobile-menu">
+            <div style="position: absolute; top: 0; right: 0; z-index: 10;">
+              <img
+                src="/svgs/close.svg"
+                style="width: 12vw; height: 12vw;"
+                alt="remove"
+              />
+            </div>
+
+            <div style="position: absolute; top: 3vw; left: 3vw; z-index: 5;">
+              <div class="cart-icon">
+                <a href="/bucket">
+                  <img
+                    src="/svgs/povozka.svg"
+                    alt="корзина"
+                    class="cart-icon__image"
+                    style="width: 10vw; height: 10vw;"
+                  />
+                  <div class="cart-icon__notification">
+                    <span class="cart-icon__count adaptive-text__company"
+                      >0</span
+                    >
+                  </div>
+                </a>
+              </div>
+            </div>
+
+            <div
+              style="
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: space-around;
+                height: 100%;
+                width: 100%;
+                padding-top: 15vw;
+                position: relative;
+                z-index: 2;
+              "
+            >
+              <nav class="mobile-nav-list">
+                <ul
+                  class="fixed-container adaptive-text__company fixed-container__list fixed-container__mobile"
+                >
+                  <li style="display: flex; justify-content: center;">
+                    <a href="/catalog" class="dropbtn ham-link">
+                      Каталог товаров
+                    </a>
+                  </li>
+                  <li style="display: flex; justify-content: center;">
+                    <a href="/services" class="dropbtn ham-link">
+                      Услуги и сервис
+                    </a>
+                  </li>
+                  <li
+                    style="display: flex; justify-content: center; flex-direction: column; align-items: center; position: relative; z-index: 5;"
+                  >
+                    <a
+                      href="#"
+                      class="dropbtn ham-link mobile-company-btn"
+                      style="display: flex; align-items: center; gap: 5px; justify-content: center; position: relative; z-index: 6;"
+                    >
+                      О компании
+                      <img
+                        src="/svgs/arrdown.svg"
+                        alt="стрелка вниз"
+                        style="width: 4vw; height: 4vw; position: relative; z-index: 2;"
+                        class="mobile-arrow"
+                      />
+                    </a>
+                    <div
+                      class="mobile-dropdown-content"
+                      style="position: relative; z-index: 4;"
+                    >
+                      <a
+                        href="/company/recvisits"
+                        data-route="recs"
+                        class="ham-link"
+                        >Реквизиты</a
+                      >
+                      <a
+                        href="/company/feedback"
+                        data-route="reviews"
+                        class="ham-link"
+                        >Отзывы</a
+                      >
+                      <a
+                        href="/company/clients"
+                        data-route="clients"
+                        class="ham-link"
+                        >Наши клиенты</a
+                      >
+                      <a href="#" data-route="delivery" class="ham-link"
+                        >Доставка и оплата</a
+                      >
+                      <a
+                        href="/company/contacts"
+                        data-route="contacts"
+                        class="ham-link"
+                        >Контакты</a
+                      >
+                    </div>
+                  </li>
+
+                  <li style="display: flex; justify-content: center;">
+                    <div class="header__contacts">
+                      <div class="adaptive-text__company">
+                        <a
+                          style="display: flex; align-items: center; gap: 0.2vw"
+                          href="tel:+1234567890"
+                        >
+                          <div style="margin-top: 2px; padding-right: 2px">
+                            <img
+                              style="width: 5.5vw; height: 5.5vw"
+                              src="/svgs/phone.svg"
+                              alt="phone call"
+                            />
+                          </div>
+                          <span class="ham-link" style="color: #000"
+                            >+7 (499) 638-28-01</span
+                          >
+                        </a>
+                      </div>
+                      <div class="adaptive-text__company">
+                        <a
+                          style="display: flex; align-items: center; gap: 0.2vw"
+                          href="tel:+1234567890"
+                        >
+                          <div style="margin-top: 2px; margin-right: 2px">
+                            <img
+                              style="width: 5.5vw; height: 5.5vw"
+                              src="/svgs/phone.svg"
+                              alt="phone call"
+                            />
+                          </div>
+                          <span class="ham-link" style="color: #000"
+                            >Обратный звонок</span
+                          >
+                        </a>
+                      </div>
+                    </div>
+                  </li>
+                </ul>
+              </nav>
+              <div style=" width: 75vw;">
+                <a href="/"
+                  ><img
+                    src="/svgs/logo.svg"
+                    alt="лого"
+                    class="logo"
+                    width="400"
+                    height="155"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div class="main_content" id="main_content"></div>
+    </div>
+
+    <footer class="footer">
+      <nav class="footerListContainer">
+        <div class="footer__copyright">
+          <div class="logo-container">
+            <a href="/" style="width:100%;height:100%;"
+              ><img
+                src="/svgs/logo.svg"
+                alt="лого"
+                class="logo"
+                width="400"
+                height="155"
+                loading="lazy"
+                decoding="async"
+              />
+            </a>
+          </div>
+          <p class="adaptive-text__company">
+            © 2000-2025 Интернет-магазин Tochkaholoda.ru - климатическая техника
+            и вентиляционное оборудование от официального дилера. Информация на
+            сайте не является публичной офертой. Актуальные цены и наличие
+            товара на складе просим уточнять у менеджеров.
+          </p>
+        </div>
+        <ul class="footerListContainerContacts">
+          <li class="stock-text__sale">О компании</li>
+          <li style="font-weight: 500; " class="adaptive-text__company">
+            <a href="/company/recvisits" data-route="recs">Реквизиты</a>
+          </li>
+          <li style="font-weight: 500; " class="adaptive-text__company">
+            <a href="/company/feedback" data-route="reviews">Отзывы</a>
+          </li>
+          <li style="font-weight: 500; " class="adaptive-text__company">
+            <a href="/company/clients" data-route="clients">Наши клиенты</a>
+          </li>
+
+          <li style="font-weight: 500; " class="adaptive-text__company">
+            <a href="/company/contacts" data-route="contacts">Контакты</a>
+          </li>
+        </ul>
+
+        <ul class="footerListContainerContacts">
+          <li class="stock-text__sale">Контакты</li>
+          <li
+            class="adaptive-text__company"
+            style=" color: #14193c; font-weight: 500"
+          >
+            <a href="mailto:info@tochkaholoda.ru">info@tochkaholoda.ru </a>
+          </li>
+          <li>
+            <div class="header__contacts">
+              <div class="adaptive-text__company">
+                <a
+                  style="display: flex; align-items: center; gap: 0.2vw"
+                  href="tel:+1234567890"
+                >
+                  <div style="margin-top: 2px; padding-right: 2px">
+                    <img
+                      class="phone-icon"
+                      src="/svgs/phone.svg"
+                      alt="phone call"
+                    />
+                  </div>
+                  <span>+7 (499) 638-28-01</span>
+                </a>
+              </div>
+              <div class="adaptive-text__company">
+                <a
+                  style="display: flex; align-items: center; gap: 0.2vw"
+                  href="tel:+1234567890"
+                >
+                  <div style="margin-top: 2px; margin-right: 2px">
+                    <img
+                      class="phone-icon"
+                      src="/svgs/phone.svg"
+                      alt="phone call"
+                    />
+                  </div>
+                  <span>Обратный звонок</span>
+                </a>
+              </div>
+            </div>
+          </li>
+          <li>
+            <p
+              class="adaptive-text__company"
+              style=" color: #14193c; font-weight: 500"
+            >
+              г. Москва, ул. Пруд-Ключики 5.
+            </p>
+          </li>
+          <li>
+            <p
+              class="adaptive-text__company"
+              style=" color: #14193c; font-weight: 500"
+            >
+              Время работы: Пн-Чт 9:00-18:00, Пт 9:00-17:00.
+            </p>
+          </li>
+        </ul>
+      </nav>
+    </footer>
+
+    <!-- Optimize script loading -->
+    <script type="module" src="/src/scripts/main.js" defer></script>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        const mobileCompanyBtn = document.querySelector('.mobile-company-btn');
+        const mobileDropdownContent = document.querySelector(
+          '.mobile-dropdown-content'
+        );
+        const mobileArrow = document.querySelector('.mobile-arrow');
+
+        if (mobileCompanyBtn && mobileDropdownContent && mobileArrow) {
+          mobileCompanyBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            mobileDropdownContent.classList.toggle('active');
+            if (mobileDropdownContent.classList.contains('active')) {
+              mobileArrow.style.transform = 'rotate(180deg)';
+            } else {
+              mobileArrow.style.transform = 'rotate(0deg)';
+            }
+          });
+        }
+
+        // Add passive event listeners for scroll performance
+        document.addEventListener('scroll', null, { passive: true });
+        document.addEventListener('touchstart', null, { passive: true });
+        document.addEventListener('touchmove', null, { passive: true });
+
+        // Загружаем reCAPTCHA при загрузке страницы
+        loadRecaptcha();
+      });
+    </script>
+
+    <!-- Lazy load reCaptcha -->
+    <script>
+      function loadRecaptcha() {
+        const script = document.createElement('script');
+        script.src =
+          'https://www.google.com/recaptcha/api.js?onload=onRecaptchaLoad&render=explicit';
+        script.async = true;
+        script.defer = true;
+        document.body.appendChild(script);
+      }
+
+      // Only load reCAPTCHA when needed (e.g., form interaction)
+      function onRecaptchaLoad() {
+        console.log('reCAPTCHA loaded');
+      }
+
+      // Делаем функцию доступной глобально
+      window.onRecaptchaSuccess = function(token) {
+        document.getElementById('g-recaptcha-response').value = token;
+      };
+
+      window.onerror = function(msg, url, line) {
+        if (url && url.includes('recaptcha')) {
+          console.error('reCAPTCHA error:', msg);
+        }
+      };
+    </script>
+
+    <script defer>
+      window.requestAnimationFrame(() => {
+        document.body.style.opacity = '1';
+      });
+    </script>
+  </body>
+</html>
