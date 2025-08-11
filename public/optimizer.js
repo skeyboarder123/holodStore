@@ -15,6 +15,9 @@ const supportsWebP = (function() {
 // Set data attribute on document for CSS selectors
 document.documentElement.setAttribute('data-supports-webp', supportsWebP);
 
+// Cache for WebP availability checks to avoid duplicate requests
+const webpCheckCache = new Map();
+
 // Fix layout shifts by setting dimensions on images
 function fixImageDimensions() {
   document.querySelectorAll('img:not([data-dimensions-set])').forEach((img) => {
@@ -55,15 +58,36 @@ function optimizeImageFormats() {
       if (src) {
         const webpSrc = src.replace(/\.(jpg|jpeg|png)$/i, '.webp');
 
+        // Check cache first to avoid duplicate requests
+        if (webpCheckCache.has(webpSrc)) {
+          if (webpCheckCache.get(webpSrc)) {
+            img.src = webpSrc;
+          }
+          return;
+        }
+
         // Check if WebP version exists before switching
         fetch(webpSrc, { method: 'HEAD' })
           .then((response) => {
-            if (response.ok) {
+            const exists = response.ok;
+            webpCheckCache.set(webpSrc, exists);
+            if (exists) {
               img.src = webpSrc;
             }
+            // Тихо игнорируем 404 ошибки для несуществующих WebP файлов
           })
-          .catch(() => {
+          .catch((error) => {
             // WebP version doesn't exist, keep original format
+            webpCheckCache.set(webpSrc, false);
+            // Не логируем 404 ошибки, это нормальное поведение
+            if (error.name !== 'AbortError') {
+              // Логируем только реальные сетевые ошибки, не 404
+              console.debug(
+                'WebP optimization skipped for:',
+                src,
+                error.message
+              );
+            }
           });
       }
     });
@@ -85,16 +109,37 @@ function optimizeBackgroundImages() {
       const imgUrl = match[1];
       const webpUrl = imgUrl.replace(/\.(jpg|jpeg|png)$/i, '.webp');
 
+      // Check cache first to avoid duplicate requests
+      if (webpCheckCache.has(webpUrl)) {
+        if (webpCheckCache.get(webpUrl)) {
+          const newStyle = style.replace(imgUrl, webpUrl);
+          el.setAttribute('style', newStyle);
+        }
+        return;
+      }
+
       // Check if WebP version exists
       fetch(webpUrl, { method: 'HEAD' })
         .then((response) => {
-          if (response.ok) {
+          const exists = response.ok;
+          webpCheckCache.set(webpUrl, exists);
+          if (exists) {
             const newStyle = style.replace(imgUrl, webpUrl);
             el.setAttribute('style', newStyle);
           }
+          // Тихо игнорируем 404 ошибки для несуществующих WebP файлов
         })
-        .catch(() => {
+        .catch((error) => {
           // WebP version doesn't exist, keep original
+          webpCheckCache.set(webpUrl, false);
+          // Не логируем 404 ошибки, это нормальное поведение
+          if (error.name !== 'AbortError') {
+            console.debug(
+              'WebP background optimization skipped for:',
+              imgUrl,
+              error.message
+            );
+          }
         });
     }
   });

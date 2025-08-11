@@ -4,25 +4,18 @@ import { BASE_URL, API_ROUTES } from './routes.js';
 const fallbackCatalogs = {
   results: [],
   meta: {
-    title: "Точка Холода - климатическая техника",
-    description: "Интернет-магазин климатической техники и вентиляционного оборудования",
-    keywords: "кондиционеры, вентиляция, климат"
-  }
+    title: 'Точка Холода - климатическая техника',
+    description:
+      'Интернет-магазин климатической техники и вентиляционного оборудования',
+    keywords: 'кондиционеры, вентиляция, климат',
+  },
 };
 
 export const catalogsApi = {
   async getCatalogs() {
     try {
-      // Пробуем HTTPS
-      let url = BASE_URL.replace('http:', 'https:');
-      let response = await fetch(`${url}${API_ROUTES.CATALOGS}`);
-      
-      if (!response.ok) {
-        // Fallback на HTTP
-        url = BASE_URL.replace('https:', 'http:');
-        response = await fetch(`${url}${API_ROUTES.CATALOGS}`);
-      }
-      
+      const response = await fetch(`${BASE_URL}${API_ROUTES.CATALOGS}`);
+
       if (!response.ok) {
         throw new Error('Ошибка при получении каталогов');
       }

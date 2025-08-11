@@ -18,6 +18,7 @@ import { loadBuck } from './Pages/bucket.js';
 import { loadPay } from './Pages/payment.js';
 import { loadNotFound } from './Pages/notFound.js';
 import api from '../api/api.js';
+import { getCurrentRelativePath, isCurrentPath } from './utils/pathUtils.js';
 
 // Performance optimizations
 const CACHE_EXPIRY = 60 * 60 * 1000; // 1 hour cache
@@ -86,8 +87,28 @@ function optimizePageImages() {
 }
 
 async function router() {
-  const path = window.location.pathname;
-  console.log('Текущий путь:', path);
+  // Простое получение пути для более надежной работы
+  let path = window.location.pathname;
+
+  // Для GitHub Pages убираем repository name из пути
+  if (window.location.hostname.includes('github.io')) {
+    const pathSegments = path.split('/').filter(Boolean);
+    if (pathSegments.length > 0 && !pathSegments[0].includes('.')) {
+      // Убираем первый сегмент (repository name)
+      const remainingPath = pathSegments.slice(1).join('/');
+      path = remainingPath ? '/' + remainingPath : '/';
+    }
+  }
+
+  // Для других хостингов с subdirectory тоже учитываем
+  if (path.length > 1 && path.endsWith('/')) {
+    path = path.slice(0, -1); // убираем завершающий слеш
+  }
+
+  // Если путь пустой или только слеш, делаем его корневым
+  if (!path || path === '') path = '/';
+
+  console.log('Текущий путь:', path, 'Original:', window.location.pathname);
 
   // Прокрутка страницы вверх
   window.scrollTo({
@@ -208,6 +229,10 @@ async function router() {
 
     default:
       // Показываем страницу 404 для неизвестных маршрутов
+      console.warn('Неизвестный маршрут:', path);
+      console.log(
+        'Доступные маршруты: /, /catalog, /services, /company, /bucket, /payment'
+      );
       loadNotFound();
   }
 
@@ -331,7 +356,22 @@ async function handleProductBySlug(catalogSlug, subcatalogSlug, productSlug) {
 
 function handleNavigation(path) {
   event.preventDefault();
-  history.pushState({}, '', path);
+
+  // Определяем правильный путь для navigation
+  let navigationPath = path;
+
+  // Для GitHub Pages добавляем repository name
+  if (window.location.hostname.includes('github.io')) {
+    const currentSegments = window.location.pathname.split('/').filter(Boolean);
+    if (currentSegments.length > 0 && !currentSegments[0].includes('.')) {
+      const repoName = currentSegments[0];
+      navigationPath = `/${repoName}${path === '/' ? '' : path}`;
+    }
+  }
+
+  console.log('Navigation:', path, '→', navigationPath);
+
+  history.pushState({}, '', navigationPath);
   window.scrollTo({
     top: 0,
     behavior: 'smooth',

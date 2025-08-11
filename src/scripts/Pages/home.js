@@ -10,15 +10,14 @@ import { getOrderFormTemplate } from '../UI/orderForm.js';
 import { getServicesNavTemplate } from '../Modules/servicesNav.js';
 
 export async function loadHome() {
-  let catalogs = [];
   const content = document.getElementById('main_content');
 
   try {
-    catalogs = await api.getCatalogs();
+    const catalogs = await api.getCatalogs();
     const articles = await api.getArticles();
     const recommendedStock = await api.getRecommendedStock();
 
-    console.log(articles);
+    console.log(catalogs);
 
     setMetaTags({
       title: catalogs.meta.title,

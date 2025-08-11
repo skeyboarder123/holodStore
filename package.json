@@ -3,12 +3,8 @@
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js",
-    "dev": "node server.js",
-    "build": "node build.js",
-    "build:simple": "node simple-build.js",
-    "build:gh-pages": "npm run build:simple"
+    "dev": "node server.js"
   },
   "keywords": [],
   "author": "",
@@ -18,7 +14,5 @@
     "express": "^4.21.2",
     "lit-html": "^3.2.1"
   },
-  "devDependencies": {
-    "prettier-plugin-html-template-literals": "^1.0.5"
-  }
+  "devDependencies": {}
 }
