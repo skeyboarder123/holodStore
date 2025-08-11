@@ -31,17 +31,16 @@ copyDir(path.join(__dirname, 'public'), distDir);
 // Копируем src в dist/src
 copyDir(path.join(__dirname, 'src'), path.join(distDir, 'src'));
 
-// Копируем node_modules (только нужные части)
+// Создаем папку libs для статических модулей
+const libsDir = path.join(distDir, 'libs');
+fs.mkdirSync(libsDir, { recursive: true });
+
+// Копируем lit-html модули в простую структуру
 const nodeModulesSrc = path.join(__dirname, 'node_modules');
-const nodeModulesDest = path.join(distDir, 'node_modules');
-
 if (fs.existsSync(nodeModulesSrc)) {
-  fs.mkdirSync(nodeModulesDest, { recursive: true });
-
-  // Копируем только lit-html (если используется)
   const litHtmlSrc = path.join(nodeModulesSrc, 'lit-html');
-  const litHtmlDest = path.join(nodeModulesDest, 'lit-html');
-
+  const litHtmlDest = path.join(libsDir, 'lit-html');
+  
   if (fs.existsSync(litHtmlSrc)) {
     copyDir(litHtmlSrc, litHtmlDest);
   }
@@ -106,20 +105,31 @@ function fixPathsInJS(dirPath) {
         'location.href="./"'
       );
 
-      // Исправляем импорты node_modules с учетом глубины вложенности
+      // Исправляем импорты node_modules - используем простую структуру libs
       const relativePath = path.relative(
         path.dirname(fullPath),
-        path.join(distDir, 'node_modules')
+        path.join(distDir, 'libs')
       );
-      const relativeNodeModulesPath = relativePath.replace(/\\/g, '/'); // Для Windows совместимости
+      const relativeLibsPath = relativePath.replace(/\\/g, '/'); // Для Windows совместимости
 
+      // Заменяем импорты lit-html на wrapper файлы
+      content = content.replace(
+        /from\s+(['"])\/node_modules\/lit-html\/lit-html\.js\1/g,
+        `from $1${relativeLibsPath}/../lit-html.js$1`
+      );
+      content = content.replace(
+        /from\s+(['"])\/node_modules\/lit-html\/directives\/unsafe-html\.js\1/g,
+        `from $1${relativeLibsPath}/../unsafe-html.js$1`
+      );
+      
+      // Общая замена для остальных node_modules
       content = content.replace(
         /from\s+(['"])\/node_modules\//g,
-        `from $1${relativeNodeModulesPath}/`
+        `from $1${relativeLibsPath}/`
       );
       content = content.replace(
         /import\s+(['"])\/node_modules\//g,
-        `import $1${relativeNodeModulesPath}/`
+        `import $1${relativeLibsPath}/`
       );
 
       fs.writeFileSync(fullPath, content);
@@ -141,6 +151,13 @@ fs.copyFileSync(
 
 // Создаем .nojekyll файл для GitHub Pages
 fs.writeFileSync(path.join(distDir, '.nojekyll'), '');
+
+// Создаем wrapper файлы для lit-html
+const litHtmlWrapper = `export { html, render } from './libs/lit-html/lit-html.js';`;
+const unsafeHtmlWrapper = `export { unsafeHTML } from './libs/lit-html/directives/unsafe-html.js';`;
+
+fs.writeFileSync(path.join(distDir, 'lit-html.js'), litHtmlWrapper);
+fs.writeFileSync(path.join(distDir, 'unsafe-html.js'), unsafeHtmlWrapper);
 
 // Создаем _config.yml для GitHub Pages (опционально)
 const githubPagesConfig = `# GitHub Pages configuration
