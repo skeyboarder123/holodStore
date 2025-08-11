@@ -47,6 +47,48 @@ if (fs.existsSync(nodeModulesSrc)) {
   }
 }
 
+// Исправляем пути в HTML файлах для GitHub Pages
+function fixPathsInHtml(filePath) {
+  let content = fs.readFileSync(filePath, 'utf8');
+  
+  // Заменяем абсолютные пути на относительные
+  content = content.replace(/src="\/([^"]+)"/g, 'src="./$1"');
+  content = content.replace(/href="\/([^"]+)"/g, 'href="./$1"');
+  content = content.replace(/url\(\/([^)]+)\)/g, 'url(./$1)');
+  
+  fs.writeFileSync(filePath, content);
+}
+
+// Исправляем пути в JS файлах
+function fixPathsInJS(dirPath) {
+  const entries = fs.readdirSync(dirPath, { withFileTypes: true });
+  
+  for (let entry of entries) {
+    const fullPath = path.join(dirPath, entry.name);
+    
+    if (entry.isDirectory()) {
+      fixPathsInJS(fullPath);
+    } else if (entry.name.endsWith('.js')) {
+      let content = fs.readFileSync(fullPath, 'utf8');
+      
+      // Исправляем различные варианты путей в JS
+      content = content.replace(/href\s*:\s*["']\/([^"']+)["']/g, 'href: "./$1"');
+      content = content.replace(/href\s*=\s*["']\/([^"']+)["']/g, 'href="./$1"');
+      content = content.replace(/src\s*=\s*["']\/([^"']+)["']/g, 'src="./$1"');
+      content = content.replace(/window\.location\.href\s*=\s*["']\/([^"']+)["']/g, 'window.location.href="./$1"');
+      content = content.replace(/location\.href\s*=\s*["']\/([^"']+)["']/g, 'location.href="./$1"');
+      
+      fs.writeFileSync(fullPath, content);
+    }
+  }
+}
+
+// Исправляем пути в index.html
+fixPathsInHtml(path.join(distDir, 'index.html'));
+
+// Исправляем пути во всех JS файлах
+fixPathsInJS(path.join(distDir, 'src'));
+
 // Создаем 404.html для GitHub Pages (копия index.html для SPA routing)
 fs.copyFileSync(
   path.join(distDir, 'index.html'),
