@@ -103,7 +103,41 @@ Error: This request has been automatically failed because it uses a deprecated v
 - `/svgs/logo.svg` → `./svgs/logo.svg`
 - Исправление происходит в HTML и JS файлах
 
-### 4. CORS ошибки
+### 4. Проблемы с API и Mixed Content
+
+**Проблема:** Контент с API сервера не загружается, логотип ведет на корневой домен.
+
+**Причины:**
+
+- Mixed Content: GitHub Pages использует HTTPS, а API сервер может быть на HTTP
+- Неправильные абсолютные пути в навигации
+- Проблемы с импортами node_modules
+
+**Решение:** Уже исправлено в актуальной версии:
+
+- ✅ Автоматический fallback HTTPS → HTTP для API
+- ✅ Исправление корневых ссылок (`href="/"` → `href="./"`)
+- ✅ Исправление импортов (`/node_modules/` → `./node_modules/`)
+- ✅ Fallback данные на случай недоступности API
+
+### 5. 404 ошибки для lit-html модулей
+
+**Проблема:**
+
+```
+lit-html.js GET 404 script home.js:4
+unsafe-html.js GET 404 script product.js:3
+```
+
+**Причина:** Неправильные относительные пути к `node_modules` для файлов на разной глубине вложенности.
+
+**Решение:** Уже исправлено в актуальной версии скрипта сборки:
+
+- ✅ Автоматический расчет относительных путей в зависимости от глубины файла
+- ✅ `src/scripts/Pages/product.js` использует `../../../node_modules/`
+- ✅ `src/scripts/main.js` использует `./node_modules/`
+
+### 6. CORS ошибки
 
 Если API запросы не работают:
 

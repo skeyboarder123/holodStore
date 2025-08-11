@@ -17,6 +17,9 @@ export async function loadHome() {
     catalogs = await api.getCatalogs();
     const articles = await api.getArticles();
     const recommendedStock = await api.getRecommendedStock();
+
+    console.log(articles);
+
     setMetaTags({
       title: catalogs.meta.title,
       description: catalogs.meta.description,

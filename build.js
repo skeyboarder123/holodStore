@@ -107,9 +107,12 @@ function fixPathsInJS(dirPath) {
       );
 
       // Исправляем импорты node_modules с учетом глубины вложенности
-      const relativePath = path.relative(path.dirname(fullPath), path.join(distDir, 'node_modules'));
+      const relativePath = path.relative(
+        path.dirname(fullPath),
+        path.join(distDir, 'node_modules')
+      );
       const relativeNodeModulesPath = relativePath.replace(/\\/g, '/'); // Для Windows совместимости
-      
+
       content = content.replace(
         /from\s+['"]\/node_modules\//g,
         `from "${relativeNodeModulesPath}/`
