@@ -114,12 +114,12 @@ function fixPathsInJS(dirPath) {
       const relativeNodeModulesPath = relativePath.replace(/\\/g, '/'); // Для Windows совместимости
 
       content = content.replace(
-        /from\s+['"]\/node_modules\//g,
-        `from "${relativeNodeModulesPath}/`
+        /from\s+(['"])\/node_modules\//g,
+        `from $1${relativeNodeModulesPath}/`
       );
       content = content.replace(
-        /import\s+['"]\/node_modules\//g,
-        `import "${relativeNodeModulesPath}/`
+        /import\s+(['"])\/node_modules\//g,
+        `import $1${relativeNodeModulesPath}/`
       );
 
       fs.writeFileSync(fullPath, content);
