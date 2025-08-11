@@ -50,16 +50,16 @@ if (fs.existsSync(nodeModulesSrc)) {
 // Исправляем пути в HTML файлах для GitHub Pages
 function fixPathsInHtml(filePath) {
   let content = fs.readFileSync(filePath, 'utf8');
-  
+
   // Заменяем абсолютные пути на относительные
   content = content.replace(/src="\/([^"]+)"/g, 'src="./$1"');
   content = content.replace(/href="\/([^"]+)"/g, 'href="./$1"');
   content = content.replace(/url\(\/([^)]+)\)/g, 'url(./$1)');
-  
+
   // Исправляем корневые ссылки (главная страница)
   content = content.replace(/href="\/"/g, 'href="./"');
   content = content.replace(/href='\/'/g, "href='./'");
-  
+
   fs.writeFileSync(filePath, content);
 }
 
@@ -93,16 +93,31 @@ function fixPathsInJS(dirPath) {
         /location\.href\s*=\s*["']\/([^"']+)["']/g,
         'location.href="./$1"'
       );
-      
+
       // Исправляем корневые ссылки в JS
       content = content.replace(/href\s*:\s*["']\/["']/g, 'href: "./"');
       content = content.replace(/href\s*=\s*["']\/["']/g, 'href="./"');
-      content = content.replace(/window\.location\.href\s*=\s*["']\/["']/g, 'window.location.href="./"');
-      content = content.replace(/location\.href\s*=\s*["']\/["']/g, 'location.href="./"');
+      content = content.replace(
+        /window\.location\.href\s*=\s*["']\/["']/g,
+        'window.location.href="./"'
+      );
+      content = content.replace(
+        /location\.href\s*=\s*["']\/["']/g,
+        'location.href="./"'
+      );
+
+      // Исправляем импорты node_modules с учетом глубины вложенности
+      const relativePath = path.relative(path.dirname(fullPath), path.join(distDir, 'node_modules'));
+      const relativeNodeModulesPath = relativePath.replace(/\\/g, '/'); // Для Windows совместимости
       
-      // Исправляем импорты node_modules
-      content = content.replace(/from\s+['"]\/node_modules\//g, 'from "./node_modules/');
-      content = content.replace(/import\s+['"]\/node_modules\//g, 'import "./node_modules/');
+      content = content.replace(
+        /from\s+['"]\/node_modules\//g,
+        `from "${relativeNodeModulesPath}/`
+      );
+      content = content.replace(
+        /import\s+['"]\/node_modules\//g,
+        `import "${relativeNodeModulesPath}/`
+      );
 
       fs.writeFileSync(fullPath, content);
     }
