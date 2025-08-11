@@ -137,7 +137,23 @@ unsafe-html.js GET 404 script product.js:3
 - ✅ `src/scripts/Pages/product.js` использует `../../../node_modules/`
 - ✅ `src/scripts/main.js` использует `./node_modules/`
 
-### 6. CORS ошибки
+### 6. Синтаксические ошибки в импортах
+
+**Проблема:**
+
+```
+Uncaught SyntaxError: Invalid or unexpected token (at home.js:4:30)
+import { html, render } from "./node_modules/lit-html/lit-html.js';
+```
+
+**Причина:** Смешанные кавычки в import statements (начинается `"`, заканчивается `'`).
+
+**Решение:** Уже исправлено в актуальной версии скрипта сборки:
+
+- ✅ Сохранение оригинального типа кавычек при замене путей
+- ✅ Использование групп в регулярных выражениях для корректной замены
+
+### 7. CORS ошибки
 
 Если API запросы не работают:
 

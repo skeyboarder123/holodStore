@@ -6,7 +6,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js",
     "build": "node build.js",
-    "build:gh-pages": "npm run build"
+    "build:simple": "node simple-build.js",
+    "build:gh-pages": "npm run build:simple"
   },
   "keywords": [],
   "author": "",

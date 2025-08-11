@@ -54,8 +54,7 @@ export const renderProductItems = (products, slug, catalogSlug, flag) => {
               ? html`
                   <button class="button-grey">
                     <a
-                      href="/catalog/${catalogSlug || ''}/${slug ||
-                        ''}/${product.slug || 'product'}"
+                      href="/catalog/${catalogSlug || ''}/${slug || ''}/${product.slug || 'product'}"
                       >Купить</a
                     >
                   </button>

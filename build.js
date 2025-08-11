@@ -40,7 +40,7 @@ const nodeModulesSrc = path.join(__dirname, 'node_modules');
 if (fs.existsSync(nodeModulesSrc)) {
   const litHtmlSrc = path.join(nodeModulesSrc, 'lit-html');
   const litHtmlDest = path.join(libsDir, 'lit-html');
-  
+
   if (fs.existsSync(litHtmlSrc)) {
     copyDir(litHtmlSrc, litHtmlDest);
   }
@@ -121,7 +121,7 @@ function fixPathsInJS(dirPath) {
         /from\s+(['"])\/node_modules\/lit-html\/directives\/unsafe-html\.js\1/g,
         `from $1${relativeLibsPath}/../unsafe-html.js$1`
       );
-      
+
       // Общая замена для остальных node_modules
       content = content.replace(
         /from\s+(['"])\/node_modules\//g,
