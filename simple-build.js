@@ -27,14 +27,31 @@ function copyDir(src, dest) {
   }
 }
 
-// Простая функция замены путей
-function fixPaths(filePath) {
+// Простая функция замены путей только для HTML
+function fixPathsInHtml(filePath) {
   let content = fs.readFileSync(filePath, 'utf8');
   
-  // Заменяем абсолютные пути на относительные
+  // Заменяем абсолютные пути на относительные только в HTML
   content = content.replace(/src="\/([^"]+)"/g, 'src="./$1"');
   content = content.replace(/href="\/([^"]+)"/g, 'href="./$1"');
   content = content.replace(/href="\/"/g, 'href="./"');
+  
+  fs.writeFileSync(filePath, content);
+}
+
+// Функция для обработки JS файлов - только исправляем node_modules пути
+function fixPathsInJS(filePath) {
+  let content = fs.readFileSync(filePath, 'utf8');
+  
+  // Заменяем только пути к node_modules на CDN
+  content = content.replace(
+    /from\s+['"]\/node_modules\/lit-html\/lit-html\.js['"]/g,
+    `from 'https://cdn.skypack.dev/lit-html'`
+  );
+  content = content.replace(
+    /from\s+['"]\/node_modules\/lit-html\/directives\/unsafe-html\.js['"]/g,
+    `from 'https://cdn.skypack.dev/lit-html/directives/unsafe-html.js'`
+  );
   
   fs.writeFileSync(filePath, content);
 }
@@ -43,8 +60,25 @@ function fixPaths(filePath) {
 copyDir(path.join(__dirname, 'public'), distDir);
 copyDir(path.join(__dirname, 'src'), path.join(distDir, 'src'));
 
-// Исправляем только HTML
-fixPaths(path.join(distDir, 'index.html'));
+// Исправляем HTML
+fixPathsInHtml(path.join(distDir, 'index.html'));
+
+// Исправляем JS файлы - заменяем lit-html на CDN
+function processJSFiles(dir) {
+  const entries = fs.readdirSync(dir, { withFileTypes: true });
+  
+  for (let entry of entries) {
+    const fullPath = path.join(dir, entry.name);
+    
+    if (entry.isDirectory()) {
+      processJSFiles(fullPath);
+    } else if (entry.name.endsWith('.js')) {
+      fixPathsInJS(fullPath);
+    }
+  }
+}
+
+processJSFiles(path.join(distDir, 'src'));
 
 // Создаем 404.html
 fs.copyFileSync(
