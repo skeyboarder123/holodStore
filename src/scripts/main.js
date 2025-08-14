@@ -64,22 +64,16 @@ const deferOperation = (fn) => {
   }
 };
 
-// Optimize images on page
 function optimizePageImages() {
-  // Add loading attributes to images
   document.querySelectorAll('img:not([loading])').forEach((img) => {
-    // Skip critical images like logo
     if (img.classList.contains('logo')) return;
 
-    // Use native lazy loading
     img.loading = 'lazy';
 
-    // Add decoding async for non-critical images
     if (!img.hasAttribute('decoding')) {
       img.decoding = 'async';
     }
 
-    // Set proper height and width to avoid layout shifts
     if (img.width && img.height && !img.style.aspectRatio) {
       img.style.aspectRatio = `${img.width} / ${img.height}`;
     }
@@ -87,36 +81,28 @@ function optimizePageImages() {
 }
 
 async function router() {
-  // Простое получение пути для более надежной работы
   let path = window.location.pathname;
 
-  // Для GitHub Pages убираем repository name из пути
+  // Для GitHub Pages убираем базовый путь /holodStore/ из URL
   if (window.location.hostname.includes('github.io')) {
-    const pathSegments = path.split('/').filter(Boolean);
-    if (pathSegments.length > 0 && !pathSegments[0].includes('.')) {
-      // Убираем первый сегмент (repository name)
-      const remainingPath = pathSegments.slice(1).join('/');
-      path = remainingPath ? '/' + remainingPath : '/';
+    if (path.startsWith('/holodStore/')) {
+      path = path.substring('/holodStore'.length);
+    } else if (path === '/holodStore') {
+      path = '/';
     }
   }
 
-  // Для других хостингов с subdirectory тоже учитываем
   if (path.length > 1 && path.endsWith('/')) {
-    path = path.slice(0, -1); // убираем завершающий слеш
+    path = path.slice(0, -1);
   }
 
-  // Если путь пустой или только слеш, делаем его корневым
   if (!path || path === '') path = '/';
 
-  console.log('Текущий путь:', path, 'Original:', window.location.pathname);
-
-  // Прокрутка страницы вверх
   window.scrollTo({
     top: 0,
     behavior: 'smooth',
   });
 
-  // Performance: Prevent layout shifts by reserving space for main content
   const mainContent = document.getElementById('main_content');
   if (mainContent) {
     mainContent.style.minHeight = '50vh';
@@ -125,11 +111,9 @@ async function router() {
   if (path.match(/^\/services\/[a-zA-Z0-9-]+$/)) {
     const slug = path.split('/').pop();
 
-    // Try from cache first
     const cachedContent = apiCache.get(`services_${slug}`);
     if (cachedContent) {
       loadServicesSlug(cachedContent);
-      // Refresh in background
       deferOperation(async () => {
         const freshContent = await api.getArticleBySlug(slug);
         apiCache.set(`services_${slug}`, freshContent);
@@ -143,17 +127,14 @@ async function router() {
     return;
   }
 
-  // Проверка на пути вида /catalog/[slug] до switch/case
   if (path.match(/^\/catalog\/[a-zA-Z0-9-]+$/)) {
     const slug = path.split('/').pop();
-    console.log('Обнаружен slug каталога:', slug);
     if (!['category', 'klim', 'kart'].includes(slug)) {
       handleCatalogBySlug(slug);
       return;
     }
   }
 
-  // Проверка на пути вида /catalog/[catalogSlug]/[subcatalogSlug]
   if (path.match(/^\/catalog\/[a-zA-Z0-9-]+\/[a-zA-Z0-9-]+$/)) {
     const parts = path.split('/');
     const catalogSlug = parts[2];
@@ -362,11 +343,7 @@ function handleNavigation(path) {
 
   // Для GitHub Pages добавляем repository name
   if (window.location.hostname.includes('github.io')) {
-    const currentSegments = window.location.pathname.split('/').filter(Boolean);
-    if (currentSegments.length > 0 && !currentSegments[0].includes('.')) {
-      const repoName = currentSegments[0];
-      navigationPath = `/${repoName}${path === '/' ? '' : path}`;
-    }
+    navigationPath = `/holodStore${path === '/' ? '' : path}`;
   }
 
   console.log('Navigation:', path, '→', navigationPath);
@@ -434,8 +411,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!['category', 'klim', 'kart'].includes(slug)) {
         event.preventDefault();
         console.log('Перехват клика по ссылке каталога:', href);
-        history.pushState({}, '', href);
-        router();
+        handleNavigation(href);
       }
     } else if (
       href.startsWith('/catalog/category/') &&
@@ -443,21 +419,18 @@ document.addEventListener('DOMContentLoaded', () => {
       !href.includes('kart')
     ) {
       event.preventDefault();
-      history.pushState({}, '', href);
-      router();
+      handleNavigation(href);
     } else if (href.match(/^\/catalog\/[a-zA-Z0-9-]+\/[a-zA-Z0-9-]+$/)) {
       // Обработчик для ссылок вида /catalog/[catalogSlug]/[subcatalogSlug]
       event.preventDefault();
       console.log('Перехват клика по ссылке субкаталога:', href);
-      history.pushState({}, '', href);
-      router();
+      handleNavigation(href);
     } else if (
       href.match(/^\/catalog\/[a-zA-Z0-9-]+\/[a-zA-Z0-9-]+\/[a-zA-Z0-9-]+$/)
     ) {
       event.preventDefault();
       console.log('Перехват клика по ссылке продукта:', href);
-      history.pushState({}, '', href);
-      router();
+      handleNavigation(href);
     }
   });
 

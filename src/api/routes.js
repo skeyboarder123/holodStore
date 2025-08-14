@@ -16,7 +16,12 @@ function getApiBaseUrl() {
     return window.API_BASE_URL;
   }
 
-  // Для разработки на localhost
+  // Принудительное использование HTTP (для отладки SSL проблем)
+  if (window.FORCE_HTTP_API) {
+    return 'http://37.114.37.7:8000/api/';
+  }
+
+  // Для разработки на localhost - принудительно используем HTTP
   if (
     window.location.hostname === 'localhost' ||
     window.location.hostname === '127.0.0.1'
@@ -24,22 +29,23 @@ function getApiBaseUrl() {
     return 'http://37.114.37.7:8000/api/';
   }
 
-  // Для production - используем тот же протокол и хост, что и сайт
-  const protocol = window.location.protocol;
-  const host = window.location.host;
-
-  // Если API на том же домене
+  // Для GitHub Pages - CORS проблемы с внешним API
+  // Используем локальные данные или mock API
   if (
     window.location.hostname.includes('github.io') ||
     window.location.hostname.includes('pages')
   ) {
-    // Для GitHub Pages используем внешний API
-    return protocol === 'https:'
-      ? 'https://37.114.37.7:8000/api/'
-      : 'http://37.114.37.7:8000/api/';
+    // Возвращаем null чтобы использовать только fallback данные
+    // так как внешний API не настроен для CORS с GitHub Pages
+    console.warn(
+      'GitHub Pages обнаружены (https://skeyboarder123.github.io/holodStore/), используем только локальные данные'
+    );
+    return null;
   }
 
   // По умолчанию - API на том же хосте
+  const protocol = window.location.protocol;
+  const host = window.location.host;
   return `${protocol}//${host}/api/`;
 }
 

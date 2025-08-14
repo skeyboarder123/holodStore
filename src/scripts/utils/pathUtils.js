@@ -14,13 +14,9 @@ export function getBasePath() {
     return '/';
   }
 
-  // Для production - определяем базовый путь из текущего URL
-  const pathSegments = window.location.pathname.split('/').filter(Boolean);
-
-  // Если это GitHub Pages (username.github.io/repository-name)
+  // Для GitHub Pages используем фиксированный базовый путь
   if (window.location.hostname.includes('github.io')) {
-    const repoName = pathSegments[0];
-    return repoName ? `/${repoName}/` : '/';
+    return '/holodStore/';
   }
 
   // Для других хостингов - используем корневой путь
