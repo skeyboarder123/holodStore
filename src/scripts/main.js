@@ -83,8 +83,16 @@ function optimizePageImages() {
 async function router() {
   let path = window.location.pathname;
 
-  // Для GitHub Pages убираем базовый путь /holodStore/ из URL
+  // Для GitHub Pages обеспечиваем правильный базовый путь
   if (window.location.hostname.includes('github.io')) {
+    // Если мы не на базовом пути /holodStore/, перенаправляем туда
+    if (!path.startsWith('/holodStore')) {
+      const newPath = '/holodStore' + (path === '/' ? '/' : path);
+      window.history.replaceState({}, '', newPath);
+      path = newPath;
+    }
+
+    // Теперь убираем /holodStore для внутренней логики роутинга
     if (path.startsWith('/holodStore/')) {
       path = path.substring('/holodStore'.length);
     } else if (path === '/holodStore') {
@@ -357,6 +365,17 @@ function handleNavigation(path) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  // Обеспечиваем правильный базовый URL для GitHub Pages при первой загрузке
+  if (window.location.hostname.includes('github.io')) {
+    const currentPath = window.location.pathname;
+    if (!currentPath.startsWith('/holodStore')) {
+      const correctPath =
+        '/holodStore' + (currentPath === '/' ? '/' : currentPath);
+      window.history.replaceState({}, '', correctPath);
+      console.log('Исправлен базовый URL:', currentPath, '→', correctPath);
+    }
+  }
+
   // Инициализация формы обратного звонка
   initializeForm();
 

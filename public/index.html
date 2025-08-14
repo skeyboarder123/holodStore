@@ -8,19 +8,10 @@
       content="Интернет-магазин климатической техники и вентиляционного оборудования"
     />
     <base href="https://skeyboarder123.github.io/holodStore/" />
-    <!-- 
-      Конфигурация API для отладки SSL и CORS ошибок:
-      - Для принудительного использования HTTP: window.FORCE_HTTP_API = true;
-      - Для установки своего API URL: window.API_BASE_URL = 'http://your-api.com/api/';
-      
-      GitHub Pages автоматически использует fallback данные из-за CORS ограничений.
-      Приложение полностью функционально без внешнего API.
-    -->
-    <!-- Preconnect to critical domains -->
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
-    <!-- Critical CSS to prevent CLS -->
     <style>
       *,
       *:before,
@@ -59,7 +50,6 @@
         }
       }
 
-      /* Reserve space for images to prevent layout shifts */
       .logo-container {
         width: 18vw;
         height: auto;
@@ -74,13 +64,11 @@
         object-fit: contain;
       }
 
-      /* Reserve space for dropdown to prevent layout shifts */
       .dropdown-content {
         min-height: 0;
         height: auto;
       }
 
-      /* Font display settings to prevent layout shifts during font loading */
       @font-face {
         font-family: 'Montserrat';
         font-style: normal;
@@ -105,20 +93,16 @@
       }
     </style>
 
-    <!-- Performance optimizer (early load) -->
     <script src="/optimizer.js" async defer></script>
 
-    <!-- Preload critical assets -->
     <link rel="preload" href="/svgs/logo.svg" as="image" />
     <link rel="preload" href="/src/styles/normalize.css" as="style" />
 
-    <!-- Font with display=swap strategy -->
     <link
       href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
 
-    <!-- Non-render blocking CSS loading -->
     <link rel="stylesheet" href="/src/styles/normalize.css" />
     <link rel="stylesheet" href="/src/styles/styles.css" />
 
@@ -528,7 +512,6 @@
       </nav>
     </footer>
 
-    <!-- Optimize script loading -->
     <script type="module" src="/src/scripts/main.js" defer></script>
 
     <script>
