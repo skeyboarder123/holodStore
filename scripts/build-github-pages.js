@@ -64,9 +64,23 @@ try {
   console.log('📁 Копируем src директорию...');
   copyDir(srcDir, path.join(buildDir, 'src'));
 
-  // Копируем 404.html в корень
-  console.log('📄 Копируем 404.html...');
-  copyFile('404.html', path.join(buildDir, '404.html'));
+  // Копируем 404.html в корень и обрабатываем base href
+  console.log('📄 Копируем и обрабатываем 404.html...');
+  if (fs.existsSync('404.html')) {
+    let content = fs.readFileSync('404.html', 'utf8');
+
+    // Исправляем пути в 404.html для GitHub Pages
+    content = content.replace(/src="\/src\//g, 'src="src/');
+    content = content.replace(/href="\/src\//g, 'href="src/');
+    content = content.replace(/src="\/svgs\//g, 'src="svgs/');
+    content = content.replace(/href="\/svgs\//g, 'href="svgs/');
+    content = content.replace(/src="\/optimizer\.js"/g, 'src="optimizer.js"');
+
+    fs.writeFileSync(path.join(buildDir, '404.html'), content);
+    console.log('Обработан: 404.html -> dist/404.html');
+  } else {
+    console.warn('Файл не найден: 404.html');
+  }
 
   // Копируем README.md
   console.log('📄 Копируем README.md...');

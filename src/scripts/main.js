@@ -83,16 +83,9 @@ function optimizePageImages() {
 async function router() {
   let path = window.location.pathname;
 
-  // Для GitHub Pages обеспечиваем правильный базовый путь
+  // При использовании <base href> извлекаем относительный путь
   if (window.location.hostname.includes('github.io')) {
-    // Если мы не на базовом пути /holodStore/, перенаправляем туда
-    if (!path.startsWith('/holodStore')) {
-      const newPath = '/holodStore' + (path === '/' ? '/' : path);
-      window.history.replaceState({}, '', newPath);
-      path = newPath;
-    }
-
-    // Теперь убираем /holodStore для внутренней логики роутинга
+    // Убираем /holodStore из пути для внутренней логики роутинга
     if (path.startsWith('/holodStore/')) {
       path = path.substring('/holodStore'.length);
     } else if (path === '/holodStore') {
@@ -346,17 +339,11 @@ async function handleProductBySlug(catalogSlug, subcatalogSlug, productSlug) {
 function handleNavigation(path) {
   event.preventDefault();
 
-  // Определяем правильный путь для navigation
-  let navigationPath = path;
+  // Когда используется <base href>, браузер автоматически добавляет базовый путь
+  // Поэтому просто используем относительный путь
+  console.log('Navigation to path:', path);
 
-  // Для GitHub Pages добавляем repository name
-  if (window.location.hostname.includes('github.io')) {
-    navigationPath = `/holodStore${path === '/' ? '' : path}`;
-  }
-
-  console.log('Navigation:', path, '→', navigationPath);
-
-  history.pushState({}, '', navigationPath);
+  history.pushState({}, '', path);
   window.scrollTo({
     top: 0,
     behavior: 'smooth',
@@ -365,16 +352,7 @@ function handleNavigation(path) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  // Обеспечиваем правильный базовый URL для GitHub Pages при первой загрузке
-  if (window.location.hostname.includes('github.io')) {
-    const currentPath = window.location.pathname;
-    if (!currentPath.startsWith('/holodStore')) {
-      const correctPath =
-        '/holodStore' + (currentPath === '/' ? '/' : currentPath);
-      window.history.replaceState({}, '', correctPath);
-      console.log('Исправлен базовый URL:', currentPath, '→', correctPath);
-    }
-  }
+  // Когда используется <base href>, браузер автоматически обрабатывает базовый путь
 
   // Инициализация формы обратного звонка
   initializeForm();
